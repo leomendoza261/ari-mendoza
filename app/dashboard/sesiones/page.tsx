@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { sql } from "@vercel/postgres";
 import TablaConsultas from "@/app/ui/sesiones/tabla-sesiones";
 
-export default async function Pacientes() {
+export default async function Sesiones() {
     /* const result = await sql`SELECT * FROM Consultas`;
     const consultas = result.rows; */
  

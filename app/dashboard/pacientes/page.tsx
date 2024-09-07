@@ -9,9 +9,9 @@ export default async function Pacientes() {
     const pacientes = [
         {
             id: 1,
-            paciente_id: '1',
+            nombre: 'leo',
             fecha_consulta: new Date('2005-07-12T03:00:00.000Z'),
-            motivo: "dolor de muela",
+            apellido: "dolor de muela",
             diagnostico: "se comio la torta",
             tratamiento: "ibuprofeno y casa"
         }
