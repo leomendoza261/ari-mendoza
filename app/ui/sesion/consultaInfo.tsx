@@ -1,4 +1,5 @@
-import { PhotoIcon } from "@heroicons/react/24/outline";
+import { ArrowRightCircleIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { Suspense } from "react";
 
 type Sesion = {
@@ -34,7 +35,10 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                             Nombre Completo
                                         </dt>
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {sesion[0].nombre} {sesion[0].apellido}
+                                            <Link href={`/dashboard/pacientes/${sesion[0].paciente_id}`}
+                                                className="hover:text-blue-500">
+                                                {sesion[0].nombre} {sesion[0].apellido} <ArrowRightCircleIcon aria-hidden="true" className="inline-block h-5 w-5 flex-shrink-0 text-gray-400 hover:text-blue-500"/>
+                                            </Link>
                                         </dd>
                                     </div>
                                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

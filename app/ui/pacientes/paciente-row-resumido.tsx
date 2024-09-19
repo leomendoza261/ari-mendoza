@@ -4,13 +4,13 @@ export default function PacienteRowResumido({ paciente }) {
     return (
       <>
         <td className="px-4 py-3">
-          <Link href={`/dashboard/pacientes/${paciente.dni}`}>{paciente.dni}</Link>
+          <Link href={`/dashboard/pacientes/${paciente.id}`}>{paciente.dni}</Link>
         </td>
         <td className="px-4 py-3">
-          <Link href={`/dashboard/pacientes/${paciente.dni}`}>{paciente.nombre}</Link>
+          <Link href={`/dashboard/pacientes/${paciente.id}`}>{paciente.nombre}</Link>
         </td>
         <td className="px-4 py-3">
-          <Link href={`/dashboard/pacientes/${paciente.dni}`}>{paciente.apellido}</Link>
+          <Link href={`/dashboard/pacientes/${paciente.id}`}>{paciente.apellido}</Link>
         </td>
       </>
     );

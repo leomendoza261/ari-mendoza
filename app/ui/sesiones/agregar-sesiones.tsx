@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-export default function ModalAgregarConsulta({ onClose, onSubmit }) {
+export default function AgregarSesion({ onClose, onSubmit }) {
     const [consulta, setConsulta] = useState({
         dni: '',
         nombre: '',

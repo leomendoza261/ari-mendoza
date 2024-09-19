@@ -3,6 +3,7 @@
 import { MagnifyingGlassCircleIcon } from "@heroicons/react/24/outline";
 import TablaPacientesCompleta from "./tabla-pacientes-completa";
 import TablaPacientesResumida from "./tabla-pacientes-resumida";
+import Link from "next/link";
 
 type TablaPacientesProps = {
   pacientes: Paciente[];
@@ -14,11 +15,12 @@ export default async function TablaPacientes({ pacientes }: TablaPacientesProps)
       <h1 className="mb-8 text-xl md:text-2xl">Pacientes</h1>
 
       <div className="flex justify-between">
-        <button
+        <Link
+          href={`/dashboard/pacientes/agregarpaciente`}
           className="h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
         >
           Añadir paciente
-        </button>
+        </Link>
 
         <div className="relative ml-2">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
