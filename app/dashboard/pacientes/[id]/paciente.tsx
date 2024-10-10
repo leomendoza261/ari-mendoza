@@ -116,7 +116,7 @@ export default async function PacienteInfo({ pacienteInfo }: PacienteInfoProps) 
                                 <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
                                     <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                         <div className="flex w-0 flex-1 items-center">
-                                            <PhotoIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                                            
                                             <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                                 <span className="truncate font-medium">resume_back_end_developer.pdf</span>
                                                 <span className="flex-shrink-0 text-gray-400">dd/mm/aaaa</span>
@@ -130,7 +130,7 @@ export default async function PacienteInfo({ pacienteInfo }: PacienteInfoProps) 
                                     </li>
                                     <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                         <div className="flex w-0 flex-1 items-center">
-                                            <PhotoIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                                            
                                             <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                                 <span className="truncate font-medium">coverletter_back_end_developer.pdf</span>
                                                 <span className="flex-shrink-0 text-gray-400">dd/mm/aaaa</span>

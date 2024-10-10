@@ -1,4 +1,4 @@
-import { ArrowRightCircleIcon, PhotoIcon } from "@heroicons/react/24/outline";
+
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -37,7 +37,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                                             <Link href={`/dashboard/pacientes/${sesion[0].paciente_id}`}
                                                 className="hover:text-blue-500">
-                                                {sesion[0].nombre} {sesion[0].apellido} <ArrowRightCircleIcon aria-hidden="true" className="inline-block h-5 w-5 flex-shrink-0 text-gray-400 hover:text-blue-500"/>
+                                                {sesion[0].nombre} {sesion[0].apellido} 
                                             </Link>
                                         </dd>
                                     </div>
@@ -96,10 +96,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                                     sesion[0].imagenes.map((imagen, index) => (
                                                         <li key={index} className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                                             <div className="flex w-0 flex-1 items-center">
-                                                                <PhotoIcon
-                                                                    aria-hidden="true"
-                                                                    className="h-5 w-5 flex-shrink-0 text-gray-400"
-                                                                />
+                                                    
                                                                 <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                                                     <span className="truncate font-medium">
                                                                         {imagen}
