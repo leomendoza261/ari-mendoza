@@ -185,13 +185,13 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                 <div className="flex justify-end space-x-4">
                     <button
                         className="bg-red-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 active:bg-red-600"
-                        onClick={() => handleEliminarConsulta(sesion.consulta_id)}
+                        onClick={() => handleEliminarConsulta(sesion[0].consulta_id)}
                     >
                         Eliminar consulta
                     </button>
                     <button
                         className="bg-blue-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
-                        onClick={() => handleModificarConsulta(sesion)}
+                        onClick={() => handleModificarConsulta(sesion[0].consulta_id)}
                     >
                         Modificar consulta
                     </button>
@@ -200,3 +200,4 @@ export default function ConsultaInfo({ sesion }: Sesion) {
         </Suspense>
     );
 }
+
