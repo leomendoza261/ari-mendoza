@@ -76,7 +76,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                     {sesion.length > 0 ? (
                         <>
                             <h3 className="text-base font-semibold leading-7 text-gray-900">
-                                Consulta Numero: {sesion[0].id}
+                                Consulta Numero: {sesion[0].consulta_id}
                             </h3>
                             <p className="mt-1 max-w-2xl text-sm leading-6 text-blue-500">
                                 Información de la consulta

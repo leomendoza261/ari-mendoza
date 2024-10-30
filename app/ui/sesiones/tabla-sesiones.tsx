@@ -18,7 +18,7 @@ export default async function TablaConsultas({ sesiones }: TablaConsultasProps) 
       <div className='flex justify-between'>
         <Link
           href={"/dashboard/sesiones/agregarsesion"}
-          className=" h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
+          className=" h-10 flex items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
         >
           Añadir consulta
         </Link>
