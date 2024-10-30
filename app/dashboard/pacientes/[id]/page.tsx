@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { sql } from "@vercel/postgres";
-import PacienteInfo from "./paciente";
+import PacienteInfo from "../../../ui/paciente/paciente";
 
 export default async function Paciente(context) {
     const { id } = context.params;

@@ -1,3 +1,4 @@
+"use client";
 
 import Link from "next/link";
 import { Suspense } from "react";
@@ -14,6 +15,58 @@ type Sesion = {
 };
 
 export default function ConsultaInfo({ sesion }: Sesion) {
+
+    const handleModificarConsulta = async (pacienteMod: Object) => {
+        const confirmacion = confirm('¿Estás seguro de que deseas modificar los datos de la consulta?');
+
+        if (confirmacion) {
+            try {
+                const response = await fetch('/api/modificarPaciente', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ pacienteMod }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message);
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error al modificar los datos el paciente:', error);
+            }
+        }
+    };
+
+    const handleEliminarConsulta = async (id: number) => {
+        const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta consulta? Esta acción no se puede deshacer y eliminara su informacion.');
+
+        if (confirmacion) {
+            try {
+                const response = await fetch('/api/eliminarSesion', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message);
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error al eliminar el paciente:', error);
+            }
+        }
+    };
 
     return (
         <Suspense fallback={<div>Cargando datos de la consulta...</div>}>
@@ -37,7 +90,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                                             <Link href={`/dashboard/pacientes/${sesion[0].paciente_id}`}
                                                 className="hover:text-blue-500">
-                                                {sesion[0].nombre} {sesion[0].apellido} 
+                                                {sesion[0].nombre} {sesion[0].apellido}
                                             </Link>
                                         </dd>
                                     </div>
@@ -96,7 +149,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                                     sesion[0].imagenes.map((imagen, index) => (
                                                         <li key={index} className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                                             <div className="flex w-0 flex-1 items-center">
-                                                    
+
                                                                 <div className="ml-4 flex min-w-0 flex-1 gap-2">
                                                                     <span className="truncate font-medium">
                                                                         {imagen}
@@ -129,12 +182,18 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                         <p>No hay datos de la consulta disponibles.</p>
                     )}
                 </div>
-                <div className="flex justify-end ">
-                    <button className="bg-blue-500 h-10 items-center rounded-lg px-4 mr-2 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600">
-                        Modificar consulta
+                <div className="flex justify-end space-x-4">
+                    <button
+                        className="bg-red-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 active:bg-red-600"
+                        onClick={() => handleEliminarConsulta(sesion.consulta_id)}
+                    >
+                        Eliminar consulta
                     </button>
-                    <button className="bg-red-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 active:bg-red-600">
-                        Borrar consulta
+                    <button
+                        className="bg-blue-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
+                        onClick={() => handleModificarConsulta(sesion)}
+                    >
+                        Modificar consulta
                     </button>
                 </div>
             </div>
