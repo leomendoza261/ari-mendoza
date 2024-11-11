@@ -116,7 +116,8 @@ export default async function Paciente(context) {
         Pacientes.id, Tutores_legales.id, Tipos_sangre.tipo;  -- Incluimos Tipos_sangre en el GROUP BY
 `;
     const paciente = result.rows[0]; // Deberías obtener el primer (y único) elemento
-    console.log(paciente)
+
+    /* console.log(paciente) */
 
     return (
         <Suspense fallback={<div>Cargando...</div>}>
