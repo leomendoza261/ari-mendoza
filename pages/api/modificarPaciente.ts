@@ -6,7 +6,7 @@ export default async function ModificarPacienteHandler(req: NextApiRequest, res:
     /* console.log(req.body) */
 
     if (req.method === 'PUT') {
-        const { id, nombre, apellido, tipo_sangre_id, fecha_nacimiento, numero_telefono, email, obra_social, tutor_legal_id, alergias, enfermedades, medicamentos, cirugias_previas } = req.body;
+        const { id, dni, nombre, apellido, tipo_sangre_id, fecha_nacimiento, numero_telefono, email, obra_social, tutor_legal_id, alergias, enfermedades, medicamentos, cirugias_previas } = req.body;
 
 
         try {
@@ -17,6 +17,7 @@ export default async function ModificarPacienteHandler(req: NextApiRequest, res:
             await sql`
                 UPDATE Pacientes
                 SET 
+                    dni = COALESCE(NULLIF(${dni}, dni), dni),
                     nombre = COALESCE(NULLIF(${nombre}, nombre), nombre),
                     apellido = COALESCE(NULLIF(${apellido}, apellido), apellido),
                     tipo_sangre_id = COALESCE(NULLIF(${tipo_sangre_id}, tipo_sangre_id), tipo_sangre_id),

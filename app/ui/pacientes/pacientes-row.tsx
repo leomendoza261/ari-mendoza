@@ -14,7 +14,7 @@ export default function PacienteRow({ paciente }) {
           <Link href={`/dashboard/pacientes/${paciente.id}`}>{paciente.apellido}</Link>
         </td>
         <td className="px-4 py-3">
-          <Link href={`/dashboard/pacientes/${paciente.id}`}>{paciente.tipo_sangre}</Link>
+          <Link href={`/dashboard/pacientes/${paciente.id}`}>{paciente.tipo_sangre_id}</Link>
         </td>
         <td className="px-4 py-3">
           <Link href={`/dashboard/pacientes/${paciente.id}`}>
