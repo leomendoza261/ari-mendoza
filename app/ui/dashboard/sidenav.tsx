@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import NavLinks from '@/app/ui/dashboard/nav-links';
 import AcmeLogo from '@/app/ui/acme-logo';
+import LogoutIcon from "../icons/LogoutIcon";
 
 export default function SideNav() {
   return (
@@ -13,12 +14,20 @@ export default function SideNav() {
           <AcmeLogo />
         </div>
       </Link>
+      
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
+
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+        
+        {/* Botón de cerrar sesión */}
         <form>
-          <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-red-100 hover:text-red-600 md:flex-none md:justify-start md:p-2 md:px-3">
-            <div className="hidden md:block">Cerrar Sesion</div>
+          <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-red-100 p-3 text-sm font-medium hover:bg-red-100 hover:text-red-600 md:bg-gray-50 md:flex-none md:justify-start md:p-2 md:px-3">
+            {/* Mostrar siempre el ícono de Logout */}
+            <LogoutIcon size={4} strokeWidth={2}/>
+            
+            {/* Mostrar el texto solo en pantallas md o mayores */}
+            <div className="hidden md:block">Cerrar Sesión</div>
           </button>
         </form>
       </div>

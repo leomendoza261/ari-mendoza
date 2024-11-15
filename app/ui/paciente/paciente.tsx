@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { InputField } from "../inputField";
-import { KeyObject } from "crypto";
+import PencilIcon from "../icons/pencil"
 
 const tiposSangre = [
     { id: 1, tipo: 'O+' },
@@ -182,7 +181,7 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                 <>
                                     {pacienteInfo.nombre} {pacienteInfo.apellido}
                                     <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("nombre_apellido")}>
-                                        M
+                                        <PencilIcon size={4} strokeWidth={2} />
                                     </button>
                                 </>
                             )}
@@ -202,7 +201,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                             ) : (
                                 <>
                                     {pacienteMod.dni}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("dni")}> M</button>
+                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("dni")}>
+                                        <PencilIcon size={4} strokeWidth={2} />
+                                    </button>
                                 </>
                             )}
                         </dd>
@@ -221,7 +222,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                             ) : (
                                 <>
                                     {new Date(pacienteInfo.fecha_nacimiento).toLocaleDateString()}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("fecha_nacimiento")}> M</button>
+                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("fecha_nacimiento")}>
+                                        <PencilIcon size={4} strokeWidth={2} />
+                                    </button>
                                 </>
                             )}
                         </dd>
@@ -240,7 +243,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                             ) : (
                                 <>
                                     {pacienteInfo.numero_telefono}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("telefono")}> M</button>
+                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("telefono")}>
+                                        <PencilIcon size={4} strokeWidth={2} />
+                                    </button>
                                 </>
                             )}
                         </dd>
@@ -259,7 +264,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                             ) : (
                                 <>
                                     {pacienteInfo.email}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("email")}> M</button>
+                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("email")}>
+                                        <PencilIcon size={4} strokeWidth={2} />
+                                    </button>
                                 </>
                             )}
                         </dd>
@@ -296,7 +303,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                             ) : (
                                 <>
                                     {pacienteInfo.tipo_sangre}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("tipo_sangre_id")}> M</button>
+                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("tipo_sangre_id")}>
+                                        <PencilIcon size={4} strokeWidth={2} />
+                                    </button>
                                 </>
                             )}
                         </dd>
@@ -325,7 +334,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                         ) : (
                                             <>
                                                 {alergia.alergia}
-                                                <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("alergias")}>M</button>
+                                                <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("alergias")}>
+                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                </button>
                                             </>
                                         )}
                                     </div>
@@ -376,7 +387,9 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                         ) : (
                                             <>
                                                 {enfermedad.enfermedad}
-                                                <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("enfermedades")}>M</button>
+                                                <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("enfermedades")}>
+                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                </button>
                                             </>
                                         )}
                                     </div>
@@ -412,43 +425,43 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                         {isEditing && fieldToEdit === `medicamentos` ? (
                                             <>
                                                 <div>
-                                                    <label><strong>Nombre: </strong></label>
                                                     <input
                                                         type="text"
                                                         name={`medicamento_nombre_${index}`}
                                                         value={pacienteMod.medicamentos[index]?.medicamento || ''}
                                                         onChange={(e) => handleInputChangeArray(e, index, 'medicamento', 'medicamentos')}
                                                         className="border border-gray-300 rounded-lg p-2"
+                                                        placeholder="Nombre"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label><strong>Dosis: </strong></label>
                                                     <input
                                                         type="text"
                                                         name={`medicamento_dosis_${index}`}
                                                         value={pacienteMod.medicamentos[index]?.dosis || ''}
                                                         onChange={(e) => handleInputChangeArray(e, index, 'dosis', 'medicamentos')}
                                                         className="border border-gray-300 rounded-lg p-2"
+                                                        placeholder="Dosis"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label><strong>Frecuencia: </strong></label>
                                                     <input
                                                         type="text"
                                                         name={`medicamento_frecuencia_${index}`}
                                                         value={pacienteMod.medicamentos[index]?.frecuencia || ''}
                                                         onChange={(e) => handleInputChangeArray(e, index, 'frecuencia', 'medicamentos')}
                                                         className="border border-gray-300 rounded-lg p-2"
+                                                        placeholder="Frecuencia"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label><strong>Vía de administración: </strong></label>
                                                     <input
                                                         type="text"
                                                         name={`medicamento_via_${index}`}
                                                         value={pacienteMod.medicamentos[index]?.via_administracion || ''}
                                                         onChange={(e) => handleInputChangeArray(e, index, 'via_administracion', 'medicamentos')}
                                                         className="border border-gray-300 rounded-lg p-2"
+                                                        placeholder="Via de administracion"
                                                     />
                                                 </div>
                                                 <button
@@ -467,16 +480,16 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                             </>
                                         ) : (
                                             <>
-                                                <strong>Nombre:</strong> {medicamento.medicamento} <br />
-                                                <strong>Dosis:</strong> {medicamento.dosis} <br />
-                                                <strong>Frecuencia:</strong> {medicamento.frecuencia} <br />
-                                                <strong>Vía de administración:</strong> {medicamento.via_administracion} <br />
+                                                <strong>Nombre:</strong> {medicamento.medicamento}
                                                 <button
                                                     className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                                                     onClick={() => toggleEditField(`medicamentos`)} // Activar modo de edición
                                                 >
-                                                    Modificar
-                                                </button>
+                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                </button> <br />
+                                                <strong>Dosis:</strong> {medicamento.dosis} <br />
+                                                <strong>Frecuencia:</strong> {medicamento.frecuencia} <br />
+                                                <strong>Vía de administración:</strong> {medicamento.via_administracion}
                                             </>
                                         )}
                                     </div>
@@ -486,43 +499,43 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                     {isEditing && fieldToEdit === `medicamentos` ? (
                                         <>
                                             <div>
-                                                <label><strong>Nombre: </strong></label>
                                                 <input
                                                     type="text"
                                                     name="medicamento"
                                                     value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.medicamento || ''}
                                                     onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'medicamento', 'medicamentos')}
                                                     className="border border-gray-300 rounded-lg p-2"
+                                                    placeholder="Nombre"
                                                 />
                                             </div>
                                             <div>
-                                                <label><strong>Dosis: </strong></label>
                                                 <input
                                                     type="text"
                                                     name="dosis"
                                                     value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.dosis || ''}
                                                     onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'dosis', 'medicamentos')}
                                                     className="border border-gray-300 rounded-lg p-2"
+                                                    placeholder="Dosis"
                                                 />
                                             </div>
                                             <div>
-                                                <label><strong>Frecuencia: </strong></label>
                                                 <input
                                                     type="text"
                                                     name="frecuencia"
                                                     value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.frecuencia || ''}
                                                     onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'frecuencia', 'medicamentos')}
                                                     className="border border-gray-300 rounded-lg p-2"
+                                                    placeholder="Frecuencia"
                                                 />
                                             </div>
                                             <div>
-                                                <label><strong>Vía de administración: </strong></label>
                                                 <input
                                                     type="text"
                                                     name="via_administracion"
                                                     value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.via_administracion || ''}
                                                     onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'via_administracion', 'medicamentos')}
                                                     className="border border-gray-300 rounded-lg p-2"
+                                                    placeholder="Via de administracion"
                                                 />
                                             </div>
                                         </>
@@ -547,7 +560,6 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                         {isEditing && fieldToEdit === "historial_cirugias" ? (
                                             <>
                                                 <div>
-                                                    <label><strong>Cirugía: </strong></label>
                                                     <input
                                                         type="text"
                                                         name={`cirugia_${index}`}
@@ -558,17 +570,16 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label><strong>Fecha: </strong></label>
                                                     <input
                                                         type="date"
                                                         name={`fecha_${index}`}
                                                         value={pacienteMod.historial_cirugias[index]?.fecha || ''}
                                                         onChange={(e) => handleInputChangeArray(e, index, 'fecha', 'historial_cirugias')}
                                                         className="border border-gray-300 rounded-lg p-2"
+                                                        placeholder="fecha"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label><strong>Observaciones: </strong></label>
                                                     <input
                                                         type="text"
                                                         name={`observaciones_${index}`}
@@ -593,15 +604,15 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                             </>
                                         ) : (
                                             <>
-                                                <strong>Cirugía:</strong> {cirugia.cirugia} <br />
-                                                <strong>Fecha:</strong> {cirugia.fecha} <br />
-                                                <strong>Observaciones:</strong> {cirugia.observaciones} <br />
+                                                <strong>Cirugía:</strong> {cirugia.cirugia}
                                                 <button
                                                     className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                                                     onClick={() => toggleEditField("historial_cirugias")} // Activar modo de edición
                                                 >
-                                                    Modificar
-                                                </button>
+                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                </button> <br />
+                                                <strong>Fecha:</strong> {cirugia.fecha} <br />
+                                                <strong>Observaciones:</strong> {cirugia.observaciones} <br />
                                             </>
                                         )}
                                     </div>
@@ -611,7 +622,6 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                     {isEditing && fieldToEdit === "historial_cirugias" ? (
                                         <>
                                             <div>
-                                                <label><strong>Cirugía: </strong></label>
                                                 <input
                                                     type="text"
                                                     name="cirugia"
@@ -622,17 +632,16 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                 />
                                             </div>
                                             <div>
-                                                <label><strong>Fecha: </strong></label>
                                                 <input
                                                     type="date"
                                                     name="fecha"
                                                     value={pacienteMod.historial_cirugias[pacienteMod.historial_cirugias.length - 1]?.fecha || ''}
                                                     onChange={(e) => handleInputChangeArray(e, pacienteMod.historial_cirugias.length - 1, 'fecha', 'historial_cirugias')}
                                                     className="border border-gray-300 rounded-lg p-2"
+                                                    placeholder="fecha"
                                                 />
                                             </div>
                                             <div>
-                                                <label><strong>Observaciones: </strong></label>
                                                 <input
                                                     type="text"
                                                     name="observaciones"

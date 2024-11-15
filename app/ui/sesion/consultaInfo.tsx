@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useCallback, useState } from "react";
+import PencilIcon from "../icons/pencil";
 
 type Sesion = {
     nombre: string;
@@ -15,6 +16,23 @@ type Sesion = {
 };
 
 export default function ConsultaInfo({ sesion }: Sesion) {
+    const [sesionMod, setSesionMod] = useState({
+        paciente_id: sesion[0].paciente_id,
+        nombre: sesion[0].nombre,
+        apellido: sesion[0].apellido,
+        dni: sesion[0].dni,
+        fecha_consulta: sesion[0].fecha_consulta,
+        hora_consulta: sesion[0].hora_consulta,
+        motivo: sesion[0].motivo,
+        diagnostico: sesion[0].diagnostico,
+        tratamiento: sesion[0].tratamiento,
+        imagenes: sesion[0].imagenes,
+        notas: sesion[0].notas,
+    });
+
+    const [isEdit, setIsEdit] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [fieldToEdit, setFieldToEdit] = useState("");
 
     const handleModificarConsulta = async (pacienteMod: Object) => {
         const confirmacion = confirm('¿Estás seguro de que deseas modificar los datos de la consulta?');
@@ -26,7 +44,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ pacienteMod }),
+                    body: JSON.stringify({ sesionMod }),
                 });
 
                 const data = await response.json();
@@ -41,6 +59,33 @@ export default function ConsultaInfo({ sesion }: Sesion) {
             }
         }
     };
+
+    const toggleEditField = (field: string) => {
+        setIsEdit(true)
+        setIsEditing(true);
+        setFieldToEdit(field);
+    };
+
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSesionMod((prevState) => ({
+            ...prevState,
+            [name]: value
+        }));
+    }, []);
+
+    const handleInputChangeArray = (e, index, field, arrayName) => {
+        const { value } = e.target;
+        setSesionMod((prevState) => {
+            const updatedArray = [...prevState[arrayName]];  // Copia el array específico
+            updatedArray[index] = { ...updatedArray[index], [field]: value };  // Actualiza el campo específico
+            return {
+                ...prevState,
+                [arrayName]: updatedArray,  // Actualiza el estado con el array modificado
+            };
+        });
+    };
+
 
     const handleEliminarConsulta = async (id: number) => {
         const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta consulta? Esta acción no se puede deshacer y eliminara su informacion.');
@@ -90,7 +135,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                                             <Link href={`/dashboard/pacientes/${sesion[0].paciente_id}`}
                                                 className="hover:text-blue-500">
-                                                {sesion[0].nombre} {sesion[0].apellido}
+                                                {sesionMod.nombre} {sesionMod.apellido}
                                             </Link>
                                         </dd>
                                     </div>
@@ -99,8 +144,32 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                             Fecha de consulta
                                         </dt>
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {new Date(sesion[0].fecha_consulta).toLocaleDateString()}{" "}
-                                            {sesion[0].hora_consulta}
+                                            {isEditing && fieldToEdit === "fecha_hora" ? (
+                                                <>
+                                                    <input
+                                                        type="date"
+                                                        name="fecha_consulta"
+                                                        value={sesionMod.fecha_consulta}
+                                                        onChange={handleInputChange} // Maneja el cambio del nombre
+                                                        className="border border-gray-300 rounded-lg p-2 mr-2"
+                                                    />
+                                                    <input
+                                                        type="time"
+                                                        name="hora_consulta"
+                                                        value={sesionMod.hora_consulta}
+                                                        onChange={handleInputChange} // Maneja el cambio del apellido
+                                                        className="border border-gray-300 rounded-lg p-2"
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {new Date(sesionMod.fecha_consulta).toLocaleDateString()}{" "}
+                                                    {sesionMod.hora_consulta}
+                                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("fecha_hora")}>
+                                                        <PencilIcon size={4} strokeWidth={2} />
+                                                    </button>
+                                                </>
+                                            )}
                                         </dd>
                                     </div>
                                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -108,7 +177,24 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                             Motivo
                                         </dt>
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {sesion[0].motivo}
+                                            {isEditing && fieldToEdit === "motivo" ? (
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        name="motivo"
+                                                        value={sesionMod.motivo}
+                                                        onChange={handleInputChange} // Maneja el cambio del nombre
+                                                        className="border border-gray-300 rounded-lg p-2 mr-2"
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {sesionMod.motivo}
+                                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("motivo")}>
+                                                        <PencilIcon size={4} strokeWidth={2} />
+                                                    </button>
+                                                </>
+                                            )}
                                         </dd>
                                     </div>
                                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -116,7 +202,25 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                             Diagnóstico
                                         </dt>
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {sesion[0].diagnostico}
+                                        {isEditing && fieldToEdit === "diagnostico" ? (
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        name="diagnostico"
+                                                        value={sesionMod.diagnostico}
+                                                        onChange={handleInputChange} // Maneja el cambio del nombre
+                                                        className="border border-gray-300 rounded-lg p-2 mr-2"
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {sesionMod.diagnostico}
+                                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("diagnostico")}>
+                                                        <PencilIcon size={4} strokeWidth={2} />
+                                                    </button>
+                                                </>
+                                            )}
+                                            
                                         </dd>
                                     </div>
                                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -124,7 +228,24 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                             Tratamiento
                                         </dt>
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {sesion[0].tratamiento}
+                                        {isEditing && fieldToEdit === "tratamiento" ? (
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        name="tratamiento"
+                                                        value={sesionMod.tratamiento}
+                                                        onChange={handleInputChange} // Maneja el cambio del nombre
+                                                        className="border border-gray-300 rounded-lg p-2 mr-2"
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {sesionMod.tratamiento}
+                                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("tratamiento")}>
+                                                        <PencilIcon size={4} strokeWidth={2} />
+                                                    </button>
+                                                </>
+                                            )}
                                         </dd>
                                     </div>
                                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -132,7 +253,24 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                             Notas
                                         </dt>
                                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                            {sesion[0].notas}
+                                        {isEditing && fieldToEdit === "notas" ? (
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        name="notas"
+                                                        value={sesionMod.notas}
+                                                        onChange={handleInputChange} // Maneja el cambio del nombre
+                                                        className="border border-gray-300 rounded-lg p-2 mr-2"
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {sesionMod.notas}
+                                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("notas")}>
+                                                        <PencilIcon size={4} strokeWidth={2} />
+                                                    </button>
+                                                </>
+                                            )}      
                                         </dd>
                                     </div>
 
@@ -146,7 +284,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                                                 className="divide-y divide-gray-100 rounded-md border border-gray-200"
                                             >
                                                 {sesion[0].imagenes && sesion[0].imagenes.length > 0 ? (
-                                                    sesion[0].imagenes.map((imagen, index) => (
+                                                    sesionMod.imagenes.map((imagen, index) => (
                                                         <li key={index} className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                                             <div className="flex w-0 flex-1 items-center">
 
@@ -191,7 +329,7 @@ export default function ConsultaInfo({ sesion }: Sesion) {
                     </button>
                     <button
                         className="bg-blue-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
-                        onClick={() => handleModificarConsulta(sesion[0].consulta_id)}
+                        onClick={() => handleModificarConsulta(sesionMod)}
                     >
                         Modificar consulta
                     </button>

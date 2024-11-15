@@ -29,6 +29,8 @@ export default async function Sesion(context) {
         c.fecha_consulta DESC;`;
     const sesion = result.rows;
 
+    console.log(sesion)
+
     return (
         <Suspense fallback={<div>Cargando...</div>}>
             <ConsultaInfo sesion={sesion} />
