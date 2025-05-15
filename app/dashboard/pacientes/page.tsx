@@ -1,14 +1,17 @@
 import TablaPacientes from "@/app/ui/pacientes/table-pacientes";
-import { Suspense } from "react";
-import { sql } from "@vercel/postgres";
 
 export default async function Pacientes() {
-    const result = await sql`SELECT * FROM Pacientes`;
-    const pacientes = result.rows;
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/pacientes`, {
+        cache: 'no-store', // importante para que se actualice siempre
+    });
+
+    if (!res.ok) {
+        return <div>No se encontraron los pacientes.</div>;
+    }
+
+    const pacientes = await res.json();
 
     return (
-        <Suspense fallback={<div>Cargando...</div>}>
-            <TablaPacientes pacientes={pacientes}/>
-        </Suspense>
+        <TablaPacientes pacientes={pacientes} />
     );
 }

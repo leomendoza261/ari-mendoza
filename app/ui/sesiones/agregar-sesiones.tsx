@@ -5,14 +5,11 @@ import React, { useState } from 'react';
 export default function AgregarSesion() {
     const [consulta, setConsulta] = useState({
         dni: '',
-        nombre: '',
-        apellido: '',
         fecha_consulta: '',
         hora_consulta: '',
         motivo: '',
         diagnostico: '',
         tratamiento: '',
-        archivos: [], // Incluyendo los archivos aquí
     });
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -35,8 +32,15 @@ export default function AgregarSesion() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const form = e.currentTarget;
+        if (!form.checkValidity()) {
+            // Mostrar errores o prevenir envío
+            return;
+        }
+
         try {
-            const response = await fetch('/api/agregarSesion', {
+            const response = await fetch('/api/agregarconsulta', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,24 +64,8 @@ export default function AgregarSesion() {
     };
 
     return (
-        <div className="w-full max-w-2xl mx-auto bg-white p-1">
+        <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto bg-white p-1">
             <h2 className="text-blue-500 text-xl text-center mb-4">Consulta</h2>
-            <input
-                type="text"
-                name="nombre"
-                value={consulta.nombre}
-                onChange={handleChange}
-                placeholder="Nombre"
-                className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 mt-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-            />
-            <input
-                type="text"
-                name="apellido"
-                value={consulta.apellido}
-                onChange={handleChange}
-                placeholder="Apellido"
-                className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 mt-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-            />
             <input
                 type="text"
                 name="dni"
@@ -144,7 +132,7 @@ export default function AgregarSesion() {
 
             <div className="flex justify-end mt-4">
                 <button
-                    onClick={handleSubmit}
+                    type="submit"
                     className="h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50">
                     Guardar
                 </button>
@@ -164,6 +152,6 @@ export default function AgregarSesion() {
                     </div>
                 </div>
             )}
-        </div>
+        </form>
     );
 }

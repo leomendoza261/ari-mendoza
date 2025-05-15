@@ -1,6 +1,5 @@
 "use client";
 
-import { MagnifyingGlassCircleIcon } from "@heroicons/react/24/outline";
 import TablaSesionesCompleta from "./tabla-sesiones-completa";
 import TablaSesionesResumida from "./tabla-sesiones-resumida";
 import Link from "next/link";
@@ -9,7 +8,20 @@ type TablaConsultasProps = {
   sesiones: Sesion[];
 };
 
-export default async function TablaConsultas({ sesiones }: TablaConsultasProps) {
+type Sesion = {
+  id: number;
+  fecha_consulta: string;
+  hora_consulta: string;
+  motivo: string;
+  diagnostico: string;
+  tratamiento: string;
+  pacientes: {
+    nombre: string;
+    apellido: string
+  };
+}
+
+export default function TablaConsultas({ sesiones }: TablaConsultasProps) {
 
   return (
     <div className="w-full">
@@ -31,7 +43,6 @@ export default async function TablaConsultas({ sesiones }: TablaConsultasProps) 
         </div>
       </div>
       
-
       <TablaSesionesCompleta sesiones={sesiones}/>
       <TablaSesionesResumida sesiones={sesiones}/>
     </div>

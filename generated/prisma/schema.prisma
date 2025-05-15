@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model alergias {
+  id          Int        @id @default(autoincrement())
+  paciente_id Int?
+  alergia     String
+  pacientes   pacientes? @relation(fields: [paciente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model consultas {
+  id             Int        @id @default(autoincrement())
+  paciente_id    Int?
+  fecha_consulta DateTime   @db.Date
+  hora_consulta  DateTime   @db.Time(6)
+  motivo         String
+  diagnostico    String?
+  tratamiento    String?
+  imagenes       String[]
+  notas          String?
+  pacientes      pacientes? @relation(fields: [paciente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model contactos_emergencia {
+  id          Int        @id @default(autoincrement())
+  paciente_id Int?
+  nombre      String     @db.VarChar(100)
+  relacion    String?    @db.VarChar(50)
+  telefono    String     @db.VarChar(20)
+  pacientes   pacientes? @relation(fields: [paciente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model enfermedades {
+  id          Int        @id @default(autoincrement())
+  paciente_id Int?
+  enfermedad  String
+  pacientes   pacientes? @relation(fields: [paciente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model historial_cirugias {
+  id            Int        @id @default(autoincrement())
+  paciente_id   Int?
+  cirugia       String
+  fecha         DateTime?  @db.Date
+  observaciones String?
+  pacientes     pacientes? @relation(fields: [paciente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model medicamentos_actuales {
+  id                 Int        @id @default(autoincrement())
+  paciente_id        Int?
+  medicamento        String
+  dosis              String
+  frecuencia         String
+  via_administracion String
+  pacientes          pacientes? @relation(fields: [paciente_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model pacientes {
+  id                    Int                     @id @default(autoincrement())
+  dni                   String                  @unique @db.VarChar(20)
+  nombre                String                  @db.VarChar(100)
+  apellido              String                  @db.VarChar(100)
+  tipo_sangre_id        Int?
+  fecha_nacimiento      DateTime                @db.Date
+  numero_telefono       String                  @db.VarChar(30)
+  email                 String                  @db.VarChar(40)
+  obra_social           String?                 @db.VarChar(30)
+  tutor_legal_id        Int?
+  alergias              alergias[]
+  consultas             consultas[]
+  contactos_emergencia  contactos_emergencia[]
+  enfermedades          enfermedades[]
+  historial_cirugias    historial_cirugias[]
+  medicamentos_actuales medicamentos_actuales[]
+  tipos_sangre          tipos_sangre?           @relation(fields: [tipo_sangre_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tutores_legales       tutores_legales?        @relation(fields: [tutor_legal_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tipos_sangre {
+  id        Int         @id @default(autoincrement())
+  tipo      String      @unique @db.VarChar(5)
+  pacientes pacientes[]
+}
+
+model tutores_legales {
+  id        Int         @id @default(autoincrement())
+  dni       String      @unique @db.VarChar(20)
+  nombre    String      @db.VarChar(100)
+  apellido  String      @db.VarChar(100)
+  telefono  String?     @db.VarChar(20)
+  direccion String?     @db.VarChar(200)
+  pacientes pacientes[]
+}

@@ -1,6 +1,25 @@
 import PacienteRow from "./pacientes-row";
 
-export default function TablaPacientesCompleta({ pacientes }) {
+type TablaPacientesCompletaProps = {
+  pacientes: Paciente[];
+};
+
+type Paciente = {
+  id: number,
+  nombre: string,
+  apellido: string,
+  dni: string,
+  fecha_nacimiento: string,
+  tipos_sangre: {
+    tipo: string
+  } | null;
+  tutores_legales: {
+    nombre: string,
+    apellido: string
+  } | null
+}
+
+export default function TablaPacientesCompleta({ pacientes }: TablaPacientesCompletaProps) {
   return (
     <div className="hidden md:block overflow-x-auto mt-2">
       <table className="min-w-full rounded-md text-gray-900">
@@ -11,7 +30,6 @@ export default function TablaPacientesCompleta({ pacientes }) {
             <th className="px-4 py-3">Apellido</th>
             <th className="px-4 py-3">Tipo de Sangre</th>
             <th className="px-4 py-3">Fecha de Nacimiento</th>
-            <th className="px-4 py-3">Menor de Edad</th>
             <th className="px-4 py-3">Tutor Legal</th>
           </tr>
         </thead>

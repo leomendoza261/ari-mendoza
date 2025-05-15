@@ -21,14 +21,13 @@ export default function AgregarPaciente() {
         apellido: '',
         fecha_nacimiento: '',
         tutor_legal_dni: '',
-        telefono: '',
+        numero_telefono: '',
         email: '',
         tipo_sangre_id: '', // Almacena el ID del tipo de sangre
         alergias: [{ alergia: '' }],
         enfermedades: [{ enfermedad: '' }],
         medicamentos: [{ medicamento: '', dosis: '', frecuencia: '', via: '' }],
         cirugias_previas: [{ cirugia: '', fecha: '', observaciones: '' }],
-        observaciones: '',
         obra_social: '',
     });
 
@@ -73,32 +72,71 @@ export default function AgregarPaciente() {
         });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const form = e.currentTarget as HTMLFormElement;
+        if (!form.checkValidity()) {
+            // Mostrar errores manualmente si querés
+            return;
+        }
+
+        // Filtrar datos vacíos o incompletos
+        const alergiasFiltradas = paciente.alergias?.filter(
+            (a) => a.alergia && a.alergia.trim() !== ''
+        ) || [];
+
+        const medicamentosFiltrados = paciente.medicamentos?.filter(
+            (m) => m.medicamento && m.dosis && m.via && m.frecuencia
+        ) || [];
+
+        const enfermedadesFiltradas = paciente.enfermedades?.filter(
+            (e) => e.enfermedad && e.enfermedad.trim() !== ''
+        ) || [];
+
+        const cirugiasFiltradas = paciente.cirugias_previas?.filter(
+            (c) => c.cirugia && c.fecha && c.observaciones
+        ) || [];
+
+        // Construir objeto final a enviar
+        const pacienteFiltrado = {
+            ...paciente,
+            tipo_sangre_id: Number(paciente.tipo_sangre_id),
+            alergias: alergiasFiltradas,
+            medicamentos: medicamentosFiltrados,
+            enfermedades: enfermedadesFiltradas,
+            cirugias_previas: cirugiasFiltradas,
+        };
+
+        console.log(pacienteFiltrado)
         try {
-            const response = await fetch('/api/agregarPaciente', {
+            const response = await fetch('/api/agregarpaciente', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(paciente),
+                body: JSON.stringify(pacienteFiltrado),
             });
+
             const result = await response.json();
+
             if (response.ok) {
                 setModalMessage('Paciente agregado con éxito');
             } else {
                 setModalMessage(`Error al agregar el paciente: ${result.error}`);
             }
-        } catch (error) {
+        } catch (error: any) {
             setModalMessage('Error al enviar los datos: ' + error.message);
         }
+
         setModalVisible(true);  // Mostrar el modal
     };
+
 
     const esMenorEdad = calcularEdad(paciente.fecha_nacimiento) < 18;
 
     return (
-        <div className="w-full max-w-2xl mx-auto bg-white p-1">
+        <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto bg-white p-1">
             <h2 className="text-blue-500 text-xl text-center mb-4">Información Personal</h2>
             <input
                 type="text"
@@ -106,6 +144,7 @@ export default function AgregarPaciente() {
                 value={paciente.nombre}
                 onChange={(e) => handleChange(e, 0, 'paciente')}
                 placeholder="Nombre"
+                required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
             <input
@@ -114,6 +153,7 @@ export default function AgregarPaciente() {
                 value={paciente.apellido}
                 onChange={(e) => handleChange(e, 0, 'paciente')}
                 placeholder="Apellido"
+                required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
             <input
@@ -122,6 +162,7 @@ export default function AgregarPaciente() {
                 value={paciente.dni}
                 onChange={(e) => handleChange(e, 0, 'paciente')}
                 placeholder="DNI"
+                required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
             <input
@@ -129,6 +170,7 @@ export default function AgregarPaciente() {
                 name="fecha_nacimiento"
                 value={paciente.fecha_nacimiento}
                 onChange={(e) => handleChange(e, 0, 'paciente')}
+                required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
             {esMenorEdad && (
@@ -138,13 +180,14 @@ export default function AgregarPaciente() {
                     value={paciente.tutor_legal_dni}
                     onChange={(e) => handleChange(e, 0, 'paciente')}
                     placeholder="DNI del tutor legal"
+                    required
                     className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
                 />
             )}
             <input
                 type="tel"
-                name="telefono"
-                value={paciente.telefono}
+                name="numero_telefono"
+                value={paciente.numero_telefono}
                 onChange={(e) => handleChange(e, 0, 'paciente')}
                 placeholder="Número de teléfono"
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
@@ -326,28 +369,14 @@ export default function AgregarPaciente() {
                 </button>
             </div>
 
-            {/* Observaciones */}
-            <div>
-                <h3 className="text-lg font-bold">Observaciones</h3>
-                <textarea
-                    name="observaciones"
-                    value={paciente.observaciones}
-                    onChange={(e) => handleChange(e, 0, 'paciente')}
-                    placeholder="Observaciones"
-                    className="peer block w-full rounded-md border border-gray-200 py-2 text-sm"
-                />
-            </div>
-
             <div className="flex justify-end mt-4">
                 <button
                     type="submit"
-                    onClick={handleSubmit}
                     className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                 >
                     Agregar Paciente
                 </button>
             </div>
-
 
             {/* Modal de mensaje */}
             {modalVisible && (
@@ -363,6 +392,6 @@ export default function AgregarPaciente() {
                     </div>
                 </div>
             )}
-        </div>
+        </form>
     );
 }

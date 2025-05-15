@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { JSX, useCallback, useState } from "react";
 import PencilIcon from "../icons/pencil"
+import CancelIcon from "../icons/CancelIcon";
 
 const tiposSangre = [
     { id: 1, tipo: 'O+' },
@@ -15,45 +16,206 @@ const tiposSangre = [
     { id: 8, tipo: 'AB-' },
 ];
 
-type PacienteInfoProps = {
-    pacienteInfo: PacienteInfo;
+type Paciente = {
+    id: number;
+    nombre: string;
+    apellido: string;
+    dni: string;
+    fecha_nacimiento: string;
+    tutor_legal_dni: string;
+    numero_telefono: string;
+    email: string;
+    tipo_sangre_id: number;
+    alergias: {
+        length: number;
+        map(arg0: (alergia: any, index: any) => JSX.Element): import("react").ReactNode;
+        id: number;
+        alergia: string;
+    }[];
+    enfermedades: {
+        length: number;
+        map(arg0: (enfermedad: any, index: any) => JSX.Element): import("react").ReactNode;
+        id: number;
+        enfermedad: string;
+    }[];
+    medicamentos_actuales: {
+        length: number;
+        map(arg0: (medicamento: any, index: any) => JSX.Element): import("react").ReactNode;
+        id: number;
+        medicamento: string;
+        dosis: string;
+        frecuencia: string;
+        via_administracion: string;
+    }[];
+    historial_cirugias: {
+        length: number;
+        map(arg0: (cirugia: any, index: any) => JSX.Element): import("react").ReactNode;
+        id: number;
+        cirugia: string;
+        fecha: string;
+        observaciones: string;
+    }[];
+    obra_social: string;
+    consultas: {
+        length: number;
+        map(arg0: (consulta: any, index: any) => JSX.Element): import("react").ReactNode;
+        id: number;
+        fecha_consulta: string;
+        tratamiento: string;
+    };
+
+    alergias_eliminar?: number[];
+    enfermedades_eliminar?: number[];
+    medicamentos_actuales_eliminar?: number[];
+    historial_cirugias_eliminar?: number[];
+}
+
+
+type Alergia = { alergia: string };
+type Enfermedad = { enfermedad: string };
+type Medicamento = {
+    medicamento: string;
+    dosis: string;
+    frecuencia: string;
+    via_administracion: string;
+};
+type Cirugia = {
+    cirugia: string;
+    fecha: string;
+    observaciones: string;
 };
 
-export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
+type CamposPaciente = {
+    alergias: Alergia[];
+    enfermedades: Enfermedad[];
+    medicamentos_actuales: Medicamento[];
+    historial_cirugias: Cirugia[];
+};
+
+type ArrayName = 'alergias'| 'enfermedades' | 'medicamentos_actuales' | 'historial_cirugias';
+
+type NewField = { id: number; nombre: string; }; // Ajusta según los datos
+
+type PacienteProps = {
+    paciente: Paciente;
+};
+
+export default function Paciente({ paciente }: PacienteProps) {
+
     const [pacienteMod, setPacienteMod] = useState({
-        id: pacienteInfo.paciente_id,
-        nombre: pacienteInfo.nombre,
-        apellido: pacienteInfo.apellido,
-        dni: pacienteInfo.dni,
-        fecha_nacimiento: pacienteInfo.fecha_nacimiento,
-        tutor_legal_dni: pacienteInfo.tutor_legal_dni,
-        telefono: pacienteInfo.numero_telefono,
-        email: pacienteInfo.email,
-        tipo_sangre_id: pacienteInfo.tipo_sangre_id,
-        alergias: pacienteInfo.alergias,
-        enfermedades: pacienteInfo.enfermedades,
-        medicamentos: pacienteInfo.medicamentos,
-        historial_cirugias: pacienteInfo.historial_cirugias,
-        observaciones: pacienteInfo.observaciones,
-        obra_social: pacienteInfo.obra_social,
+        id: paciente.id,
+        nombre: paciente.nombre,
+        apellido: paciente.apellido,
+        dni: paciente.dni,
+        fecha_nacimiento: paciente.fecha_nacimiento,
+        tutor_legal_dni: paciente.tutor_legal_dni,
+        numero_telefono: paciente.numero_telefono,
+        email: paciente.email,
+        tipo_sangre_id: paciente.tipo_sangre_id,
+
+        alergias: paciente.alergias,
+        enfermedades: paciente.enfermedades,
+        medicamentos_actuales: paciente.medicamentos_actuales,
+        historial_cirugias: paciente.historial_cirugias,
+        obra_social: paciente.obra_social,
+
+        alergias_eliminar: paciente.alergias_eliminar,
+        enfermedades_eliminar: paciente.enfermedades_eliminar,
+        medicamentos_actuales_eliminar: paciente.medicamentos_actuales_eliminar,
+        historial_cirugias_eliminar: paciente.historial_cirugias_eliminar
     });
 
-    const [isEdit, setIsEdit] = useState(false);
+    const tipoSangreTexto = tiposSangre.find(tipo => tipo.id === pacienteMod.tipo_sangre_id)?.tipo || "Sin asignar";
+
+
     const [isEditing, setIsEditing] = useState(false);
-    const [fieldToEdit, setFieldToEdit] = useState(""); // Campo que está siendo editado
+    const [fieldToEdit, setFieldToEdit] = useState<string | null>(null);
 
     const handleModificarPaciente = async () => {
         console.log(pacienteMod)
+
         const confirmacion = confirm('¿Estás seguro de que deseas modificar los datos del paciente?');
+
+        if (!confirmacion) return;
+
+        // Objeto con solo los cambios detectados
+        const cambios: any = {};
+
+        // Comparaciones simples
+        if (pacienteMod.nombre !== paciente.nombre) cambios.nombre = pacienteMod.nombre;
+        if (pacienteMod.apellido !== paciente.apellido) cambios.apellido = pacienteMod.apellido;
+        if (pacienteMod.dni !== paciente.dni) cambios.dni = pacienteMod.dni;
+        if (pacienteMod.fecha_nacimiento !== paciente.fecha_nacimiento) cambios.fecha_nacimiento = pacienteMod.fecha_nacimiento;
+        if (pacienteMod.numero_telefono !== paciente.numero_telefono) cambios.numero_telefono = pacienteMod.numero_telefono;
+        if (pacienteMod.email !== paciente.email) cambios.email = pacienteMod.email;
+        if (pacienteMod.tipo_sangre_id !== paciente.tipo_sangre_id) cambios.tipo_sangre_id = pacienteMod.tipo_sangre_id;
+
+        // Comparación de arrays modificados (evita agregar arrays vacíos)
+        if (
+            JSON.stringify(pacienteMod.alergias) !== JSON.stringify(paciente.alergias) &&
+            pacienteMod.alergias.length > 0
+        ) {
+            cambios.alergias = pacienteMod.alergias;
+        }
+
+        if (
+            JSON.stringify(pacienteMod.enfermedades) !== JSON.stringify(paciente.enfermedades) &&
+            pacienteMod.enfermedades.length > 0
+        ) {
+            cambios.enfermedades = pacienteMod.enfermedades;
+        }
+
+        if (
+            JSON.stringify(pacienteMod.medicamentos_actuales) !== JSON.stringify(paciente.medicamentos_actuales) &&
+            pacienteMod.medicamentos_actuales.length > 0
+        ) {
+            cambios.medicamentos_actuales = pacienteMod.medicamentos_actuales;
+        }
+
+        if (
+            JSON.stringify(pacienteMod.historial_cirugias) !== JSON.stringify(paciente.historial_cirugias) &&
+            pacienteMod.historial_cirugias.length > 0
+        ) {
+            cambios.historial_cirugias = pacienteMod.historial_cirugias;
+        }
+
+        // Eliminar IDs si existen (mantener)
+        if ((pacienteMod.alergias_eliminar?.length ?? 0) > 0) {
+            cambios.alergias_eliminar = pacienteMod.alergias_eliminar;
+        }
+
+        if ((pacienteMod.enfermedades_eliminar?.length ?? 0) > 0) {
+            cambios.enfermedades_eliminar = pacienteMod.enfermedades_eliminar;
+        }
+
+        if ((pacienteMod.medicamentos_actuales_eliminar?.length ?? 0) > 0) {
+            cambios.medicamentos_actuales_eliminar = pacienteMod.medicamentos_actuales_eliminar;
+        }
+
+        if ((pacienteMod.historial_cirugias_eliminar?.length ?? 0) > 0) {
+            cambios.historial_cirugias_eliminar = pacienteMod.historial_cirugias_eliminar;
+        }
+
+
+        if (Object.keys(cambios).length === 0) {
+            alert("No realizaste ningún cambio.");
+            return;
+        } else {
+            console.log("este es cambios", cambios)
+        }
+
 
         if (confirmacion) {
             try {
-                const response = await fetch('/api/modificarPaciente', {
+                const response = await fetch('/api/modificarpaciente', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(pacienteMod),
+                    body: JSON.stringify({
+                        id: paciente.id,
+                        ...cambios,
+                    }),
                 });
 
                 const data = await response.json();
@@ -70,7 +232,6 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
     };
 
     const toggleEditField = (field: string) => {
-        setIsEdit(true)
         setIsEditing(true);
         setFieldToEdit(field);
     };
@@ -83,33 +244,45 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
         }));
     }, []);
 
-    const handleAddField = (arrayName, newField) => {
-        setPacienteMod((prevState) => ({
-            ...prevState,
-            [arrayName]: [...prevState[arrayName], newField], // Agrega el nuevo objeto con múltiples campos
+
+    function handleAddField<K extends keyof CamposPaciente>(
+        arrayName: K,
+        newField: CamposPaciente[K][number]
+    ) {
+        setPacienteMod((prev) => ({
+            ...prev,
+            [arrayName]: [...(prev[arrayName] || []), newField],
         }));
-        toggleEditField(arrayName); // Activa el modo de edición
-    };
+        toggleEditField(arrayName);
+    }
 
 
-    const handleRemoveField = (arrayName, indice) => {
-        setPacienteMod((prevState) => {
-            const updatedArray = [...prevState[arrayName]]; // Copia el array
-            updatedArray.splice(indice, 1); // Elimina el elemento en el índice especificado
+    const handleRemoveField = (arrayName: ArrayName, indice: number) => {
+        setPacienteMod((prevState:any) => {
+            const updatedArray = [...prevState[arrayName]];
+            const itemToRemove = updatedArray[indice];
+
+            updatedArray.splice(indice, 1); // elimina el item del array
+
+            const deleteKey = `${arrayName}_eliminar` ; // genera la key dinámica
 
             return {
                 ...prevState,
-                [arrayName]: updatedArray, // Actualiza el array en el estado
+                [arrayName]: updatedArray,
+                ...(itemToRemove?.id && {
+                    [deleteKey]: [
+                        ...(prevState[deleteKey] || []),
+                        itemToRemove.id,
+                    ],
+                }),
             };
         });
 
-        // Si tienes alguna lógica adicional para el modo de edición, puedes desactivar aquí
-        setIsEditing(false); // Desactiva el modo de edición si es necesario
+        setIsEditing(false);
     };
 
 
-
-    const handleInputChangeArray = (e, index, field, arrayName) => {
+    const handleInputChangeArray = (e:any, index: number, field: any, arrayName: ArrayName) => {
         const { value } = e.target;
         setPacienteMod((prevState) => {
             const updatedArray = [...prevState[arrayName]];  // Copia el array específico
@@ -122,11 +295,12 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
     };
 
     const handleEliminarPaciente = async (id: number) => {
+        console.log(id)
         const confirmacion = confirm('¿Estás seguro de que deseas eliminar este paciente? Esta acción no se puede deshacer y eliminará sus consultas asociadas.');
 
         if (confirmacion) {
             try {
-                const response = await fetch('/api/eliminarPaciente', {
+                const response = await fetch('/api/eliminarpaciente', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -147,130 +321,68 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
         }
     };
 
+
+    const renderField = (
+        label: string,
+        value: string,
+        fieldName: string,
+        inputType: "text" | "date" | "time" = "text"
+    ) => (
+        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">{label}</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {fieldToEdit === fieldName ? (
+                    <div className="flex items-center gap-2">
+                        <input
+                            type={inputType}
+                            name={fieldName}
+                            value={value}
+                            onChange={handleInputChange}
+                            className="border border-gray-300 rounded-lg py-1 px-2"
+                        />
+                        <button
+                            onClick={() => setFieldToEdit(null)}
+                            className="text-sm text-red-600 hover:underline"
+                        >
+                            <CancelIcon size={6} strokeWidth={1.25} />
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        {value}
+                        <button
+                            className="ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600"
+                            onClick={() => setFieldToEdit(fieldName)}
+                        >
+                            <PencilIcon size={4} strokeWidth={2} />
+                        </button>
+                    </>
+                )}
+            </dd>
+        </div>
+    );
+
     return (
-        <div key={pacienteInfo.dni}>
+        <div key={paciente.dni}>
             <div className="px-4 sm:px-0">
                 <h3 className="text-base font-semibold leading-7 text-gray-900">Información del Paciente</h3>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-blue-500">Información personal y contacto</p>
             </div>
             <div className="mt-6 border-t border-gray-100">
                 <dl className="divide-y divide-gray-100">
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Nombre Completo</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {isEditing && fieldToEdit === "nombre_apellido" ? (
-                                <>
-                                    <input
-                                        type="text"
-                                        name="nombre"
-                                        value={pacienteMod.nombre}
-                                        onChange={handleInputChange} // Maneja el cambio del nombre
-                                        className="border border-gray-300 rounded-lg p-2 mr-2"
-                                        placeholder="Nombre"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="apellido"
-                                        value={pacienteMod.apellido}
-                                        onChange={handleInputChange} // Maneja el cambio del apellido
-                                        className="border border-gray-300 rounded-lg p-2"
-                                        placeholder="Apellido"
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    {pacienteInfo.nombre} {pacienteInfo.apellido}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("nombre_apellido")}>
-                                        <PencilIcon size={4} strokeWidth={2} />
-                                    </button>
-                                </>
-                            )}
-                        </dd>
-                    </div>
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">DNI</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {isEditing && fieldToEdit === "dni" ? (
-                                <input
-                                    type="text"
-                                    name="dni"
-                                    value={pacienteMod.dni}
-                                    onChange={handleInputChange} // Vincula el campo con el evento onChange
-                                    className="border border-gray-300 rounded-lg p-2"
-                                />
-                            ) : (
-                                <>
-                                    {pacienteMod.dni}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("dni")}>
-                                        <PencilIcon size={4} strokeWidth={2} />
-                                    </button>
-                                </>
-                            )}
-                        </dd>
-                    </div>
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Fecha de nacimiento</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {isEditing && fieldToEdit === "fecha_nacimiento" ? (
-                                <input
-                                    type="date"
-                                    name="fecha_nacimiento"
-                                    value={pacienteMod.fecha_nacimiento}
-                                    onChange={handleInputChange}
-                                    className="border border-gray-300 rounded-lg p-2"
-                                />
-                            ) : (
-                                <>
-                                    {new Date(pacienteInfo.fecha_nacimiento).toLocaleDateString()}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("fecha_nacimiento")}>
-                                        <PencilIcon size={4} strokeWidth={2} />
-                                    </button>
-                                </>
-                            )}
-                        </dd>
-                    </div>
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Teléfono</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {isEditing && fieldToEdit === "telefono" ? (
-                                <input
-                                    type="phone"
-                                    name="telefono"
-                                    value={pacienteMod.telefono}
-                                    onChange={handleInputChange}
-                                    className="border border-gray-300 rounded-lg p-2"
-                                />
-                            ) : (
-                                <>
-                                    {pacienteInfo.numero_telefono}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("telefono")}>
-                                        <PencilIcon size={4} strokeWidth={2} />
-                                    </button>
-                                </>
-                            )}
-                        </dd>
-                    </div>
-                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Email</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {isEditing && fieldToEdit === "email" ? (
-                                <input
-                                    type="phone"
-                                    name="email"
-                                    value={pacienteMod.email}
-                                    onChange={handleInputChange}
-                                    className="border border-gray-300 rounded-lg p-2"
-                                />
-                            ) : (
-                                <>
-                                    {pacienteInfo.email}
-                                    <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("email")}>
-                                        <PencilIcon size={4} strokeWidth={2} />
-                                    </button>
-                                </>
-                            )}
-                        </dd>
-                    </div>
+
+                    {renderField("Nombre", pacienteMod.nombre, "nombre")}
+                    {renderField("Apellido", pacienteMod.apellido, "apellido")}
+                    {renderField("DNI", pacienteMod.dni, "dni")}
+                    {renderField("Fecha de Nacimiento", new Date(pacienteMod.fecha_nacimiento).toLocaleDateString("es-AR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                    }), "fecha_nacimiento", "date")}
+                    {renderField("Telefono", pacienteMod.numero_telefono, "numero_telefono")}
+                    {renderField("Email", pacienteMod.email, "email")}
+
+
                     {/* Información médica */}
                     <div className="px-4 sm:px-0">
                         <p className="mt-1 max-w-2xl text-sm leading-6 text-blue-500">Historial médico</p>
@@ -280,29 +392,26 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                             {isEditing && fieldToEdit === "tipo_sangre_id" ? (
                                 <select
-                                    name="tipo_sangre_id"  // Cambiado a tipo_sangre_id para que coincida con el estado
-                                    value={pacienteMod.tipo_sangre_id}  // El valor del estado debe estar en tipo_sangre_id
+                                    name="tipo_sangre_id"
+                                    value={pacienteMod.tipo_sangre_id}
                                     onChange={(e) => {
-                                        const selectedId = e.target.value;
+                                        const selectedId = Number(e.target.value);  // 👈 Conversión aquí
                                         setPacienteMod(prev => ({
                                             ...prev,
-                                            tipo_sangre_id: selectedId,  // Actualizar con el ID seleccionado
+                                            tipo_sangre_id: selectedId,
                                         }));
                                     }}
                                     className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
-                                    required  // Campo obligatorio
+                                    required
                                 >
-                                    {/* Texto inicial que solo aparece si no hay valor seleccionado */}
                                     <option value="" disabled hidden>Seleccione tipo de sangre</option>
-
-                                    {/* Opciones del tipo de sangre */}
                                     {tiposSangre.map(tipo => (
                                         <option key={tipo.id} value={tipo.id}>{tipo.tipo}</option>
                                     ))}
                                 </select>
                             ) : (
                                 <>
-                                    {pacienteInfo.tipo_sangre}
+                                    {tipoSangreTexto}
                                     <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("tipo_sangre_id")}>
                                         <PencilIcon size={4} strokeWidth={2} />
                                     </button>
@@ -319,13 +428,21 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                     <div key={index} className="mb-4">
                                         {isEditing && fieldToEdit === "alergias" ? (
                                             <>
-                                                <input
-                                                    type="text"
-                                                    name={`alergia_nombre_${index}`}
-                                                    value={pacienteMod.alergias[index]?.alergia || ''}
-                                                    onChange={(e) => handleInputChangeArray(e, index, 'alergia', 'alergias')}  // Pasa 'alergias' como arrayName
-                                                    className="border border-gray-300 rounded-lg p-2"
-                                                />
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="text"
+                                                        name={`alergia_nombre_${index}`}
+                                                        value={pacienteMod.alergias[index]?.alergia || ''}
+                                                        onChange={(e) => handleInputChangeArray(e, index, 'alergia', 'alergias')}  // Pasa 'alergias' como arrayName
+                                                        className="border border-gray-300 rounded-lg p-2"
+                                                    />
+                                                    <button
+                                                        onClick={() => setIsEditing(false)}
+                                                        className="text-sm px-2 text-red-600 hover:underline"
+                                                    >
+                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                    </button>
+                                                </div>
                                                 <br />
                                                 <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => handleAddField("alergias", { alergia: '' })}>Añadir</button>
                                                 <button className="mt-2 ml-2 bg-red-100 py-1 px-2 rounded-lg hover:text-red-600" onClick={() => handleRemoveField("alergias", index)}>Eliminar</button>
@@ -371,14 +488,23 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                     <div key={index} className="mb-4">
                                         {isEditing && fieldToEdit === "enfermedades" ? (
                                             <>
-                                                <input
-                                                    type="text"
-                                                    name={`enfermedad-${index}`}
-                                                    value={pacienteMod.enfermedades[index]?.enfermedad || ''}
-                                                    onChange={(e) => handleInputChangeArray(e, index, 'enfermedad', 'enfermedades')}
-                                                    className="border border-gray-300 rounded-lg p-2"
-                                                    placeholder="Enfermedad"
-                                                />
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="text"
+                                                        name={`enfermedad-${index}`}
+                                                        value={pacienteMod.enfermedades[index]?.enfermedad || ''}
+                                                        onChange={(e) => handleInputChangeArray(e, index, 'enfermedad', 'enfermedades')}
+                                                        className="border border-gray-300 rounded-lg p-2"
+                                                        placeholder="Enfermedad"
+                                                    />
+                                                    <button
+                                                        onClick={() => setIsEditing(false)}
+                                                        className="text-sm px-2 text-red-600 hover:underline"
+                                                    >
+                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                    </button>
+                                                </div>
+
                                                 <br />
                                                 <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => handleAddField("enfermedades", { enfermedad: '' })}>Añadir</button>
                                                 <button className="mt-2 ml-2 bg-red-100 py-1 px-2 rounded-lg hover:text-red-600" onClick={() => handleRemoveField("enfermedades", index)}>Eliminar</button>
@@ -397,14 +523,23 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                             ) : (
                                 <div className="mb-4">
                                     {isEditing && fieldToEdit === "enfermedades" ? (
-                                        <input
-                                            type="text"
-                                            name="enfermedad"
-                                            value={pacienteMod.enfermedades[pacienteMod.enfermedades.length - 1]?.enfermedad || ''}
-                                            onChange={(e) => handleInputChangeArray(e, pacienteMod.enfermedades.length - 1, 'enfermedad', 'enfermedades')}
-                                            className="border border-gray-300 rounded-lg p-2"
-                                            placeholder="Enfermedad"
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="text"
+                                                name="enfermedad"
+                                                value={pacienteMod.enfermedades[pacienteMod.enfermedades.length - 1]?.enfermedad}
+                                                onChange={(e) => handleInputChangeArray(e, pacienteMod.enfermedades.length - 1, 'enfermedad', 'enfermedades')}
+                                                className="border border-gray-300 rounded-lg p-2"
+                                                placeholder="Enfermedad"
+                                            />
+                                            <button
+                                                onClick={() => setIsEditing(false)}
+                                                className="text-sm px-2 text-red-600 hover:underline"
+                                            >
+                                                <CancelIcon size={6} strokeWidth={1.25} />
+                                            </button>
+                                        </div>
+
                                     ) : (
                                         <>
                                             <p>No hay enfermedades registradas</p>
@@ -419,27 +554,33 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt className="text-sm font-medium leading-6 text-gray-900">Medicacion</dt>
                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {pacienteMod.medicamentos && pacienteMod.medicamentos.length > 0 ? (
-                                pacienteMod.medicamentos.map((medicamento, index) => (
+                            {pacienteMod.medicamentos_actuales && pacienteMod.medicamentos_actuales.length > 0 ? (
+                                pacienteMod.medicamentos_actuales.map((medicamento, index) => (
                                     <div key={index} className="mb-4">
-                                        {isEditing && fieldToEdit === `medicamentos` ? (
+                                        {isEditing && fieldToEdit === `medicamentos_actuales` ? (
                                             <>
-                                                <div>
+                                                <div className="flex items-center gap-2">
                                                     <input
                                                         type="text"
                                                         name={`medicamento_nombre_${index}`}
-                                                        value={pacienteMod.medicamentos[index]?.medicamento || ''}
-                                                        onChange={(e) => handleInputChangeArray(e, index, 'medicamento', 'medicamentos')}
+                                                        value={pacienteMod.medicamentos_actuales[index]?.medicamento || ''}
+                                                        onChange={(e) => handleInputChangeArray(e, index, 'medicamento', 'medicamentos_actuales')}
                                                         className="border border-gray-300 rounded-lg p-2"
                                                         placeholder="Nombre"
                                                     />
+                                                    <button
+                                                        onClick={() => setFieldToEdit(null)}
+                                                        className="text-sm px-2 text-red-600 hover:underline"
+                                                    >
+                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                    </button>
                                                 </div>
                                                 <div>
                                                     <input
                                                         type="text"
                                                         name={`medicamento_dosis_${index}`}
-                                                        value={pacienteMod.medicamentos[index]?.dosis || ''}
-                                                        onChange={(e) => handleInputChangeArray(e, index, 'dosis', 'medicamentos')}
+                                                        value={pacienteMod.medicamentos_actuales[index]?.dosis || ''}
+                                                        onChange={(e) => handleInputChangeArray(e, index, 'dosis', 'medicamentos_actuales')}
                                                         className="border border-gray-300 rounded-lg p-2"
                                                         placeholder="Dosis"
                                                     />
@@ -448,8 +589,8 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                     <input
                                                         type="text"
                                                         name={`medicamento_frecuencia_${index}`}
-                                                        value={pacienteMod.medicamentos[index]?.frecuencia || ''}
-                                                        onChange={(e) => handleInputChangeArray(e, index, 'frecuencia', 'medicamentos')}
+                                                        value={pacienteMod.medicamentos_actuales[index]?.frecuencia || ''}
+                                                        onChange={(e) => handleInputChangeArray(e, index, 'frecuencia', 'medicamentos_actuales')}
                                                         className="border border-gray-300 rounded-lg p-2"
                                                         placeholder="Frecuencia"
                                                     />
@@ -458,21 +599,21 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                     <input
                                                         type="text"
                                                         name={`medicamento_via_${index}`}
-                                                        value={pacienteMod.medicamentos[index]?.via_administracion || ''}
-                                                        onChange={(e) => handleInputChangeArray(e, index, 'via_administracion', 'medicamentos')}
+                                                        value={pacienteMod.medicamentos_actuales[index]?.via_administracion || ''}
+                                                        onChange={(e) => handleInputChangeArray(e, index, 'via_administracion', 'medicamentos_actuales')}
                                                         className="border border-gray-300 rounded-lg p-2"
                                                         placeholder="Via de administracion"
                                                     />
                                                 </div>
                                                 <button
                                                     className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600"
-                                                    onClick={() => handleAddField("medicamentos", { medicamento: '', dosis: '', frecuencia: '', via_administracion: '' })} // Añadir medicamento
+                                                    onClick={() => handleAddField("medicamentos_actuales", { medicamento: '', dosis: '', frecuencia: '', via_administracion: '' })} // Añadir medicamento
                                                 >
                                                     Añadir
                                                 </button>
                                                 <button
                                                     className="mt-2 ml-2 bg-red-100 py-1 px-2 rounded-lg hover:text-red-600"
-                                                    onClick={() => handleRemoveField("medicamentos", index)} // Eliminar medicamento
+                                                    onClick={() => handleRemoveField("medicamentos_actuales", index)} // Eliminar medicamento
                                                 >
                                                     Eliminar
                                                 </button>
@@ -483,7 +624,7 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                 <strong>Nombre:</strong> {medicamento.medicamento}
                                                 <button
                                                     className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
-                                                    onClick={() => toggleEditField(`medicamentos`)} // Activar modo de edición
+                                                    onClick={() => toggleEditField(`medicamentos_actuales`)} // Activar modo de edición
                                                 >
                                                     <PencilIcon size={4} strokeWidth={2} />
                                                 </button> <br />
@@ -496,24 +637,30 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                 ))
                             ) : (
                                 <div className="mb-4">
-                                    {isEditing && fieldToEdit === `medicamentos` ? (
+                                    {isEditing && fieldToEdit === `medicamentos_actuales` ? (
                                         <>
-                                            <div>
+                                            <div className="flex items-center gap-2">
                                                 <input
                                                     type="text"
                                                     name="medicamento"
-                                                    value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.medicamento || ''}
-                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'medicamento', 'medicamentos')}
+                                                    value={pacienteMod.medicamentos_actuales[pacienteMod.medicamentos_actuales.length - 1]?.medicamento || ''}
+                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos_actuales.length - 1, 'medicamento', 'medicamentos_actuales')}
                                                     className="border border-gray-300 rounded-lg p-2"
                                                     placeholder="Nombre"
                                                 />
+                                                <button
+                                                    onClick={() => setFieldToEdit(null)}
+                                                    className="text-sm px-2 text-red-600 hover:underline"
+                                                >
+                                                    <CancelIcon size={6} strokeWidth={1.25} />
+                                                </button>
                                             </div>
                                             <div>
                                                 <input
                                                     type="text"
                                                     name="dosis"
-                                                    value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.dosis || ''}
-                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'dosis', 'medicamentos')}
+                                                    value={pacienteMod.medicamentos_actuales[pacienteMod.medicamentos_actuales.length - 1]?.dosis || ''}
+                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos_actuales.length - 1, 'dosis', 'medicamentos_actuales')}
                                                     className="border border-gray-300 rounded-lg p-2"
                                                     placeholder="Dosis"
                                                 />
@@ -522,8 +669,8 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                 <input
                                                     type="text"
                                                     name="frecuencia"
-                                                    value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.frecuencia || ''}
-                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'frecuencia', 'medicamentos')}
+                                                    value={pacienteMod.medicamentos_actuales[pacienteMod.medicamentos_actuales.length - 1]?.frecuencia || ''}
+                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos_actuales.length - 1, 'frecuencia', 'medicamentos_actuales')}
                                                     className="border border-gray-300 rounded-lg p-2"
                                                     placeholder="Frecuencia"
                                                 />
@@ -532,8 +679,8 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                 <input
                                                     type="text"
                                                     name="via_administracion"
-                                                    value={pacienteMod.medicamentos[pacienteMod.medicamentos.length - 1]?.via_administracion || ''}
-                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos.length - 1, 'via_administracion', 'medicamentos')}
+                                                    value={pacienteMod.medicamentos_actuales[pacienteMod.medicamentos_actuales.length - 1]?.via_administracion || ''}
+                                                    onChange={(e) => handleInputChangeArray(e, pacienteMod.medicamentos_actuales.length - 1, 'via_administracion', 'medicamentos_actuales')}
                                                     className="border border-gray-300 rounded-lg p-2"
                                                     placeholder="Via de administracion"
                                                 />
@@ -542,7 +689,7 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                     ) : (
                                         <>
                                             <p>No hay medicacion registrada</p>
-                                            <button className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600" onClick={() => handleAddField("medicamentos", { medicamento: '', dosis: '', frecuencia: '', via_administracion: '' })}>Añadir</button>
+                                            <button className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600" onClick={() => handleAddField("medicamentos_actuales", { medicamento: '', dosis: '', frecuencia: '', via_administracion: '' })}>Añadir</button>
                                         </>
                                     )}
                                 </div>
@@ -559,7 +706,7 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                     <div key={index} className="mb-4">
                                         {isEditing && fieldToEdit === "historial_cirugias" ? (
                                             <>
-                                                <div>
+                                                <div className="flex items-center gap-2">
                                                     <input
                                                         type="text"
                                                         name={`cirugia_${index}`}
@@ -568,6 +715,12 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                                                         className="border border-gray-300 rounded-lg p-2"
                                                         placeholder="Nombre de la cirugía"
                                                     />
+                                                    <button
+                                                        onClick={() => setFieldToEdit(null)}
+                                                        className="text-sm px-2 text-red-600 hover:underline"
+                                                    >
+                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                    </button>
                                                 </div>
                                                 <div>
                                                     <input
@@ -714,8 +867,8 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                         <dt className="text-sm font-medium leading-6 text-gray-900">Consultas</dt>
 
                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            {pacienteInfo.consultas && pacienteInfo.consultas.length > 0 ? (
-                                pacienteInfo.consultas.map((consulta, index) => (
+                            {paciente.consultas && paciente.consultas.length > 0 ? (
+                                paciente.consultas.map((consulta, index) => (
                                     <div key={index} className="mb-4">
                                         <Link href={`/dashboard/sesiones/${consulta.consulta_id}`}
                                             className="hover:text-blue-500">
@@ -735,22 +888,16 @@ export default function PacienteInfo({ pacienteInfo }: PacienteInfoProps) {
                     <div className="flex justify-end space-x-4">
                         <button
                             className="bg-red-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 active:bg-red-600"
-                            onClick={() => handleEliminarPaciente(pacienteInfo.paciente_id)}
+                            onClick={() => handleEliminarPaciente(paciente.id)}
                         >
                             Eliminar paciente
                         </button>
-                        {isEdit ? (
-                            <button
-                                className="bg-blue-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
-                                onClick={handleModificarPaciente}
-                            >
-                                Guardar datos
-                            </button>
-                        ) : (
-                            <>
-                            </>
-                        )}
-
+                        <button
+                            className="bg-blue-500 h-10 items-center rounded-lg px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600"
+                            onClick={handleModificarPaciente}
+                        >
+                            Guardar datos
+                        </button>
                     </div>
                 </dl>
             </div>

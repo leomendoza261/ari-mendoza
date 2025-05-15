@@ -1,5 +1,3 @@
-"use client";
-
 import TablaPacientesCompleta from "./tabla-pacientes-completa";
 import TablaPacientesResumida from "./tabla-pacientes-resumida";
 import Link from "next/link";
@@ -7,6 +5,21 @@ import Link from "next/link";
 type TablaPacientesProps = {
   pacientes: Paciente[];
 };
+
+type Paciente = {
+  id: number;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  fecha_nacimiento: string;
+  tipos_sangre: {
+    tipo: string
+  } | null;
+  tutores_legales: {
+    nombre: string,
+    apellido: string
+  } | null;
+}
 
 export default async function TablaPacientes({ pacientes }: TablaPacientesProps) {
   return (
@@ -27,7 +40,6 @@ export default async function TablaPacientes({ pacientes }: TablaPacientesProps)
             placeholder="DNI paciente"
           />
         </div>
-
       </div>
 
       <TablaPacientesCompleta pacientes={pacientes} />
