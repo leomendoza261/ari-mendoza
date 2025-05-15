@@ -11,8 +11,6 @@ export default async function Sesiones() {
 
     const consultas = await res.json();
 
-    console.log(consultas)
-
     return (
             <TablaConsultas sesiones={consultas}/>
     );

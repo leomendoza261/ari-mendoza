@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
+import type { NextRequest } from 'next/server';
 
 const prisma = new PrismaClient();
 
+// Usamos el tipo correcto para context: { params: { id: string } }
 export async function GET(
-  _request: Request,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const consultaId = parseInt(params.id);
+
+    if (isNaN(consultaId)) {
+      return new NextResponse('ID inválido', { status: 400 });
+    }
 
     const consulta = await prisma.consultas.findUnique({
       where: { id: consultaId },

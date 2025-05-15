@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from '@/generated/prisma' 
+import { PrismaClient } from '@/generated/prisma'; 
+import type { NextRequest } from "next/server";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id);
 
   if (isNaN(id)) {
@@ -20,15 +24,28 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
           medicamento: true,
           dosis: true,
           frecuencia: true,
-          via_administracion: true
-        }
+          via_administracion: true,
+        },
       },
       enfermedades: { select: { id: true, enfermedad: true } },
-      historial_cirugias: { select: { id: true, cirugia: true, fecha: true, observaciones: true} },
-      consultas: { select: { id: true, fecha_consulta: true, tratamiento: true } },
+      historial_cirugias: {
+        select: {
+          id: true,
+          cirugia: true,
+          fecha: true,
+          observaciones: true,
+        },
+      },
+      consultas: {
+        select: {
+          id: true,
+          fecha_consulta: true,
+          tratamiento: true,
+        },
+      },
       tutores_legales: true,
-      tipos_sangre: { select: { id: true, tipo: true } }
-    }
+      tipos_sangre: { select: { id: true, tipo: true } },
+    },
   });
 
   if (!paciente) {
