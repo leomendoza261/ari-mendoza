@@ -144,7 +144,7 @@ export default function ConsultaInfo({ sesion }: Props) {
                             onClick={() => setFieldToEdit(null)}
                             className="text-sm text-red-600 hover:underline"
                         >
-                            <CancelIcon size={6} strokeWidth={1.25} />
+                            <CancelIcon strokeWidth={1.25} />
                         </button>
                     </div>
                 ) : (
@@ -154,7 +154,7 @@ export default function ConsultaInfo({ sesion }: Props) {
                             className="ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600"
                             onClick={() => setFieldToEdit(fieldName)}
                         >
-                            <PencilIcon size={4} strokeWidth={2} />
+                            <PencilIcon strokeWidth={2} />
                         </button>
                     </>
                 )}

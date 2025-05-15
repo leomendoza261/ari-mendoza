@@ -344,7 +344,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                             onClick={() => setFieldToEdit(null)}
                             className="text-sm text-red-600 hover:underline"
                         >
-                            <CancelIcon size={6} strokeWidth={1.25} />
+                            <CancelIcon strokeWidth={1.25} />
                         </button>
                     </div>
                 ) : (
@@ -354,7 +354,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                             className="ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600"
                             onClick={() => setFieldToEdit(fieldName)}
                         >
-                            <PencilIcon size={4} strokeWidth={2} />
+                            <PencilIcon strokeWidth={2} />
                         </button>
                     </>
                 )}
@@ -413,7 +413,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                 <>
                                     {tipoSangreTexto}
                                     <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("tipo_sangre_id")}>
-                                        <PencilIcon size={4} strokeWidth={2} />
+                                        <PencilIcon strokeWidth={2} />
                                     </button>
                                 </>
                             )}
@@ -440,7 +440,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                         onClick={() => setIsEditing(false)}
                                                         className="text-sm px-2 text-red-600 hover:underline"
                                                     >
-                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                        <CancelIcon strokeWidth={1.25} />
                                                     </button>
                                                 </div>
                                                 <br />
@@ -452,7 +452,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                             <>
                                                 {alergia.alergia}
                                                 <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("alergias")}>
-                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                    <PencilIcon strokeWidth={2} />
                                                 </button>
                                             </>
                                         )}
@@ -501,7 +501,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                         onClick={() => setIsEditing(false)}
                                                         className="text-sm px-2 text-red-600 hover:underline"
                                                     >
-                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                        <CancelIcon strokeWidth={1.25} />
                                                     </button>
                                                 </div>
 
@@ -514,7 +514,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                             <>
                                                 {enfermedad.enfermedad}
                                                 <button className="mt-2 ml-2 bg-blue-100 py-1 px-2 rounded-lg hover:text-blue-600" onClick={() => toggleEditField("enfermedades")}>
-                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                    <PencilIcon strokeWidth={2} />
                                                 </button>
                                             </>
                                         )}
@@ -536,7 +536,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                 onClick={() => setIsEditing(false)}
                                                 className="text-sm px-2 text-red-600 hover:underline"
                                             >
-                                                <CancelIcon size={6} strokeWidth={1.25} />
+                                                <CancelIcon strokeWidth={1.25} />
                                             </button>
                                         </div>
 
@@ -572,7 +572,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                         onClick={() => setFieldToEdit(null)}
                                                         className="text-sm px-2 text-red-600 hover:underline"
                                                     >
-                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                        <CancelIcon strokeWidth={1.25} />
                                                     </button>
                                                 </div>
                                                 <div>
@@ -626,7 +626,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                     className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                                                     onClick={() => toggleEditField(`medicamentos_actuales`)} // Activar modo de edición
                                                 >
-                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                    <PencilIcon strokeWidth={2} />
                                                 </button> <br />
                                                 <strong>Dosis:</strong> {medicamento.dosis} <br />
                                                 <strong>Frecuencia:</strong> {medicamento.frecuencia} <br />
@@ -652,7 +652,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                     onClick={() => setFieldToEdit(null)}
                                                     className="text-sm px-2 text-red-600 hover:underline"
                                                 >
-                                                    <CancelIcon size={6} strokeWidth={1.25} />
+                                                    <CancelIcon strokeWidth={1.25} />
                                                 </button>
                                             </div>
                                             <div>
@@ -719,7 +719,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                         onClick={() => setFieldToEdit(null)}
                                                         className="text-sm px-2 text-red-600 hover:underline"
                                                     >
-                                                        <CancelIcon size={6} strokeWidth={1.25} />
+                                                        <CancelIcon strokeWidth={1.25} />
                                                     </button>
                                                 </div>
                                                 <div>
@@ -762,7 +762,7 @@ export default function Paciente({ paciente }: PacienteProps) {
                                                     className="mt-2 ml-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                                                     onClick={() => toggleEditField("historial_cirugias")} // Activar modo de edición
                                                 >
-                                                    <PencilIcon size={4} strokeWidth={2} />
+                                                    <PencilIcon strokeWidth={2} />
                                                 </button> <br />
                                                 <strong>Fecha:</strong> {cirugia.fecha} <br />
                                                 <strong>Observaciones:</strong> {cirugia.observaciones} <br />

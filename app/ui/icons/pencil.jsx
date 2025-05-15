@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PencilIcon = ({ size = 24, strokeColor = "currentColor", strokeWidth = 1.5, ...props }) => {
+const PencilIcon = ({ strokeColor = "currentColor", strokeWidth = 1.5, ...props }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +8,7 @@ const PencilIcon = ({ size = 24, strokeColor = "currentColor", strokeWidth = 1.5
       viewBox="0 0 24 24"
       strokeWidth={strokeWidth}
       stroke={strokeColor}
-      className={`w-${size} h-${size}  hover:text-blue-600`}
+      className={`w-4 h-4  hover:text-blue-600`}
       {...props}
     >
       <path
