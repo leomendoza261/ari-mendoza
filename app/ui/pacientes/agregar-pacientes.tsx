@@ -1,6 +1,55 @@
 'use client';
 
+export type Paciente = {
+    dni: string;
+    nombre: string;
+    apellido: string;
+    fecha_nacimiento: string;
+    tutor_legal_dni: string;
+    numero_telefono: string;
+    email: string;
+    tipo_sangre_id: string;
+    obra_social: string;
+    alergias: { alergia: string }[];
+    enfermedades: { enfermedad: string }[];
+    medicamentos: {
+        medicamento: string;
+        dosis: string;
+        frecuencia: string;
+        via: string;
+    }[];
+    cirugias_previas: {
+        cirugia: string;
+        fecha: string;
+        observaciones: string;
+    }[];
+};
+
+type CamposArray = 'alergias' | 'enfermedades' | 'medicamentos' | 'cirugias_previas';
+
+type CampoDinamico =
+    | { tipo: "alergias"; valor: { alergia: string } }
+    | { tipo: "enfermedades"; valor: { enfermedad: string } }
+    | {
+        tipo: "medicamentos";
+        valor: {
+            medicamento: string;
+            dosis: string;
+            frecuencia: string;
+            via: string;
+        };
+    }
+    | {
+        tipo: "cirugias_previas";
+        valor: {
+            cirugia: string;
+            fecha: string;
+            observaciones: string;
+        };
+    };
+
 import React, { useState } from 'react';
+import CancelIcon from '../icons/CancelIcon';
 
 // Mapeo de tipos de sangre
 const tiposSangre = [
@@ -35,7 +84,7 @@ export default function AgregarPaciente() {
     const [modalMessage, setModalMessage] = useState('');
 
     // Función para calcular la edad a partir de la fecha de nacimiento
-    const calcularEdad = (fecha_nacimiento) => {
+    const calcularEdad = (fecha_nacimiento: string) => {
         const hoy = new Date();
         const nacimiento = new Date(fecha_nacimiento);
         let edad = hoy.getFullYear() - nacimiento.getFullYear();
@@ -48,12 +97,26 @@ export default function AgregarPaciente() {
         return edad;
     };
 
-    const handleChange = (e, index, section) => {
+    const handleSimpleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
+        setPaciente((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+        index: number,
+        section: keyof Paciente
+    ) => {
         const { name, value } = e.target;
 
         setPaciente((prev) => {
             if (Array.isArray(prev[section])) {
-                const updatedSection = [...prev[section]];
+                const updatedSection = [...(prev[section] as any[])];
                 updatedSection[index] = {
                     ...updatedSection[index],
                     [name]: value,
@@ -65,12 +128,24 @@ export default function AgregarPaciente() {
         });
     };
 
-    const handleAddField = (section) => {
+    const handleAddField = (section: keyof Paciente, emptyObj: any) => {
+        setPaciente((prev) => ({
+            ...prev,
+            [section]: [...(prev[section] as any[]), emptyObj],
+        }))
+    }
+
+    const handleRemoveField = (section: keyof Paciente, index: number) => {
         setPaciente((prev) => {
-            const updatedSection = [...prev[section], {}];
-            return { ...prev, [section]: updatedSection };
-        });
-    };
+            const updatedSection = [...(prev[section] as any[])]
+            updatedSection.splice(index, 1)
+            return {
+                ...prev,
+                [section]: updatedSection,
+            }
+        })
+    }
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -125,8 +200,12 @@ export default function AgregarPaciente() {
             } else {
                 setModalMessage(`Error al agregar el paciente: ${result.error}`);
             }
-        } catch (error: any) {
-            setModalMessage('Error al enviar los datos: ' + error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setModalMessage('Error al enviar los datos: ' + error.message);
+            } else {
+                setModalMessage('Ocurrió un error desconocido');
+            }
         }
 
         setModalVisible(true);  // Mostrar el modal
@@ -142,7 +221,7 @@ export default function AgregarPaciente() {
                 type="text"
                 name="nombre"
                 value={paciente.nombre}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 placeholder="Nombre"
                 required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
@@ -151,7 +230,7 @@ export default function AgregarPaciente() {
                 type="text"
                 name="apellido"
                 value={paciente.apellido}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 placeholder="Apellido"
                 required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
@@ -160,7 +239,7 @@ export default function AgregarPaciente() {
                 type="text"
                 name="dni"
                 value={paciente.dni}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 placeholder="DNI"
                 required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
@@ -169,7 +248,7 @@ export default function AgregarPaciente() {
                 type="date"
                 name="fecha_nacimiento"
                 value={paciente.fecha_nacimiento}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 required
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
@@ -178,7 +257,7 @@ export default function AgregarPaciente() {
                     type="text"
                     name="tutor_legal_dni"
                     value={paciente.tutor_legal_dni}
-                    onChange={(e) => handleChange(e, 0, 'paciente')}
+                    onChange={handleSimpleChange}
                     placeholder="DNI del tutor legal"
                     required
                     className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
@@ -188,7 +267,7 @@ export default function AgregarPaciente() {
                 type="tel"
                 name="numero_telefono"
                 value={paciente.numero_telefono}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 placeholder="Número de teléfono"
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
@@ -196,7 +275,7 @@ export default function AgregarPaciente() {
                 type="email"
                 name="email"
                 value={paciente.email}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 placeholder="Email"
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
@@ -204,7 +283,7 @@ export default function AgregarPaciente() {
                 type="text"
                 name="obra_social"
                 value={paciente.obra_social}
-                onChange={(e) => handleChange(e, 0, 'paciente')}
+                onChange={handleSimpleChange}
                 placeholder="Obra social"
                 className="peer block w-full rounded-md border border-gray-200 py-2 mt-2 text-sm"
             />
@@ -240,19 +319,29 @@ export default function AgregarPaciente() {
             <div>
                 <h3 className="text-lg font-bold">Alergias</h3>
                 {paciente.alergias.map((alergia, index) => (
-                    <input
-                        key={index}
-                        type="text"
-                        name="alergia"
-                        value={alergia.alergia}
-                        onChange={(e) => handleChange(e, index, 'alergias')}
-                        placeholder={`Alergia ${index + 1}`}
-                        className="peer block w-full rounded-md border border-gray-200 py- text-sm"
-                    />
+                    <div key={index} className="flex gap-2">
+                        <input
+                            key={index}
+                            type="text"
+                            name="alergia"
+                            value={alergia.alergia}
+                            onChange={(e) => handleChange(e, index, 'alergias')}
+                            placeholder={`Alergia ${index + 1}`}
+                            className="peer block w-full rounded-md border border-gray-200 py- text-sm"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveField('alergias', index)}
+                            className="text-red-600 hover:underline"
+                        >
+                            <CancelIcon strokeWidth={1.25} />
+                        </button>
+                    </div>
+
                 ))}
                 <button
                     type="button"
-                    onClick={() => handleAddField('alergias')}
+                    onClick={() => handleAddField('alergias', { alergia: '' })}
                     className="mt-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                 >
                     + Añadir otra alergia
@@ -263,19 +352,28 @@ export default function AgregarPaciente() {
             <div>
                 <h3 className="text-lg font-bold">Enfermedades</h3>
                 {paciente.enfermedades.map((enfermedad, index) => (
-                    <input
-                        key={index}
-                        type="text"
-                        name="enfermedad"
-                        value={enfermedad.enfermedad}
-                        onChange={(e) => handleChange(e, index, 'enfermedades')}
-                        placeholder={`Enfermedad ${index + 1}`}
-                        className="peer block w-full rounded-md border border-gray-200 py- text-sm"
-                    />
+                    <div key={index} className="flex gap-2">
+                        <input
+                            key={index}
+                            type="text"
+                            name="enfermedad"
+                            value={enfermedad.enfermedad}
+                            onChange={(e) => handleChange(e, index, 'enfermedades')}
+                            placeholder={`Enfermedad ${index + 1}`}
+                            className="peer block w-full rounded-md border border-gray-200 py- text-sm"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveField('enfermedades', index)}
+                            className="text-red-600 hover:underline"
+                        >
+                            <CancelIcon strokeWidth={1.25} />
+                        </button>
+                    </div>
                 ))}
                 <button
                     type="button"
-                    onClick={() => handleAddField('enfermedades')}
+                    onClick={() => handleAddField('enfermedades', { enfermedad: '' })}
                     className="mt-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                 >
                     + Añadir otra enfermedad
@@ -286,15 +384,25 @@ export default function AgregarPaciente() {
             <div>
                 <h3 className="text-lg font-bold">Medicamentos</h3>
                 {paciente.medicamentos.map((medicamento, index) => (
-                    <div key={index} className="space-y-2">
-                        <input
-                            type="text"
-                            name="medicamento"
-                            value={medicamento.medicamento}
-                            onChange={(e) => handleChange(e, index, 'medicamentos')}
-                            placeholder="Medicamento"
-                            className="peer block w-full rounded-md border border-gray-200 py- text-sm"
-                        />
+                    <div key={index} className="space-y-2 mt-2">
+                        <div key={index} className="flex gap-2">
+                            <input
+                                type="text"
+                                name="medicamento"
+                                value={medicamento.medicamento}
+                                onChange={(e) => handleChange(e, index, 'medicamentos')}
+                                placeholder="Medicamento"
+                                className="peer block w-full rounded-md border border-gray-200 py- text-sm"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveField('medicamentos', index)}
+                                className="text-red-600 hover:underline"
+                            >
+                                <CancelIcon strokeWidth={1.25} />
+                            </button>
+                        </div>
+
                         <input
                             type="text"
                             name="dosis"
@@ -323,7 +431,12 @@ export default function AgregarPaciente() {
                 ))}
                 <button
                     type="button"
-                    onClick={() => handleAddField('medicamentos')}
+                    onClick={() => handleAddField('medicamentos', {
+                        medicamento: '',
+                        dosis: '',
+                        frecuencia: '',
+                        via: '',
+                    })}
                     className="mt-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                 >
                     + Añadir medicamento
@@ -335,14 +448,23 @@ export default function AgregarPaciente() {
                 <h3 className="text-lg font-bold">Cirugías previas</h3>
                 {paciente.cirugias_previas.map((cirugia, index) => (
                     <div key={index} className="space-y-2">
-                        <input
-                            type="text"
-                            name="cirugia"
-                            value={cirugia.cirugia}
-                            onChange={(e) => handleChange(e, index, 'cirugias_previas')}
-                            placeholder="Cirugía"
-                            className="peer block w-full rounded-md border border-gray-200 py- text-sm"
-                        />
+                        <div key={index} className="flex gap-2 mt-2">
+                            <input
+                                type="text"
+                                name="cirugia"
+                                value={cirugia.cirugia}
+                                onChange={(e) => handleChange(e, index, 'cirugias_previas')}
+                                placeholder="Cirugía"
+                                className="peer block w-full rounded-md border border-gray-200 py- text-sm"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveField('cirugias_previas', index)}
+                                className="text-red-600 hover:underline"
+                            >
+                                <CancelIcon strokeWidth={1.25} />
+                            </button>
+                        </div>
                         <input
                             type="date"
                             name="fecha"
@@ -362,7 +484,11 @@ export default function AgregarPaciente() {
                 ))}
                 <button
                     type="button"
-                    onClick={() => handleAddField('cirugias_previas')}
+                    onClick={() => handleAddField('cirugias_previas', {
+                        cirugia: '',
+                        fecha: '',
+                        observaciones: '',
+                    })}
                     className="mt-2 bg-blue-100 py-1 px-4 rounded-lg hover:text-blue-600"
                 >
                     + Añadir cirugía

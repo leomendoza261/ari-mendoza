@@ -1,6 +1,11 @@
 'use client';
 
-export default function ModalConfirmarBorrar({ onClose, onConfirm }) {
+type Props = {
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+export default function ModalConfirmarBorrar({ onClose, onConfirm }: Props) {
     return(
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">

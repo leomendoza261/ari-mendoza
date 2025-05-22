@@ -4,11 +4,8 @@ import type { NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = parseInt(params.id);
+export async function GET(_request: NextRequest,context: { params: { id: string }}) {
+  const id = parseInt(context.params.id);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });

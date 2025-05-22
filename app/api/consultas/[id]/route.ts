@@ -5,12 +5,10 @@ import type { NextRequest } from 'next/server';
 const prisma = new PrismaClient();
 
 // Usamos el tipo correcto para context: { params: { id: string } }
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_request: NextRequest,context: { params: { id: string }} ) {
+
   try {
-    const consultaId = parseInt(params.id);
+    const consultaId = parseInt(context.params.id);
 
     if (isNaN(consultaId)) {
       return new NextResponse('ID inválido', { status: 400 });

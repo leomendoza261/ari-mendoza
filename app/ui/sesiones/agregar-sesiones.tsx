@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 export default function AgregarSesion() {
     const [consulta, setConsulta] = useState({
@@ -10,12 +10,13 @@ export default function AgregarSesion() {
         motivo: '',
         diagnostico: '',
         tratamiento: '',
+        archivos: [] as File[], // Añadimos explícitamente el tipo
     });
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setConsulta((prev) => ({
             ...prev,
@@ -23,19 +24,22 @@ export default function AgregarSesion() {
         }));
     };
 
-    const handleFileChange = (e) => {
-        setConsulta((prev) => ({
-            ...prev,
-            archivos: Array.from(e.target.files), // Guardando los archivos seleccionados
-        }));
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            setConsulta((prev) => ({
+                ...prev,
+                archivos: Array.from(files),
+            }));
+        }
     };
 
-    const handleSubmit = async (e) => {
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const form = e.currentTarget;
         if (!form.checkValidity()) {
-            // Mostrar errores o prevenir envío
             return;
         }
 
@@ -47,7 +51,7 @@ export default function AgregarSesion() {
                 },
                 body: JSON.stringify({
                     ...consulta,
-                    archivos: undefined, // Los archivos no se envían en este caso
+                    archivos: undefined, // No se envían por ahora
                 }),
             });
 
@@ -57,10 +61,15 @@ export default function AgregarSesion() {
             } else {
                 setModalMessage(`Error al agregar la consulta: ${result.error}`);
             }
-        } catch (error) {
-            setModalMessage('Error al enviar los datos: ' + error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setModalMessage('Error al enviar los datos: ' + error.message);
+            } else {
+                setModalMessage('Ocurrió un error desconocido');
+            }
         }
-        setModalVisible(true);  // Mostrar el modal
+
+        setModalVisible(true);
     };
 
     return (
@@ -138,7 +147,6 @@ export default function AgregarSesion() {
                 </button>
             </div>
 
-            {/* Modal de mensaje */}
             {modalVisible && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-4 rounded-lg shadow-lg">
